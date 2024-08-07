@@ -1,12 +1,31 @@
 import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+
+dotenv.config();
+
+
 const app = express();
+const port = process.env.PORT || 3000
+const databaseUrl = process.env.DATABASE_URL
 
-app.get('/', (req, res) => {
-  const name = process.env.NAME || 'World';
-  res.send(`Hello ${name}!`);
-});
+app.use(cors({
+  origin: [process.env.ORIGIN],
+  methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
+  credentials: true,
+}));
 
-const port = parseInt(process.env.PORT) || 3000;
-app.listen(port, () => {
+app.use(cookieParser());
+app.use(express.json());
+
+
+const server = app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
+
+mongoose
+  .connect(databaseUrl)
+  .then(() => console.log('connected to database'))
+  .catch((err) => console.log('error connecting to database',err))
