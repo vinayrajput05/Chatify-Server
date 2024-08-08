@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { getSalt } from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -39,11 +39,11 @@ userSchema.pre('save', async function (next) {
     //     next();
     // }
 
-    const salt = await getSalt();
+    const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
-const User= mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;
